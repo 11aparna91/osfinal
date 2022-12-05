@@ -1,19 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright 2022 Google LLC
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
-# [START gke_delete_cluster]
 import argparse
 import sys
 from typing import Dict
@@ -23,22 +11,12 @@ from google.cloud import container_v1
 
 
 def on_success(details: Dict[str, str]) -> None:
-    """
-    A handler function to pass into the retry backoff algorithm as the function
-    to be executed upon a successful attempt.
-    Read the `Event handlers` section of the backoff python module at:
-    https://pypi.org/project/backoff/
-    """
+
     print("Successfully deleted cluster after {elapsed:0.1f} seconds".format(**details))
 
 
 def on_failure(details: Dict[str, str]) -> None:
-    """
-    A handler function to pass into the retry backoff algorithm as the function
-    to be executed upon a failed attempt.
-    Read the `Event handlers` section of the backoff python module at:
-    https://pypi.org/project/backoff/
-    """
+    
     print("Backing off {wait:0.1f} seconds after {tries} tries".format(**details))
 
 
@@ -57,12 +35,6 @@ def on_failure(details: Dict[str, str]) -> None:
 def poll_for_op_status(
     client: container_v1.ClusterManagerClient, op_id: str
 ) -> container_v1.Operation.Status:
-    """
-    A simple retry function that fetches the operation and returns it's status.
-    The function is annotated with the `backoff` python module to schedule this
-    function based on a reasonable backoff algorithm
-    """
-
     op = client.get_operation({"name": op_id})
     return op.status
 
@@ -81,7 +53,6 @@ def delete_cluster(project_id: str, location: str, cluster_name: str) -> None:
     op_identifier = f"{cluster_location}/operations/{delete_response.name}"
     # poll for the operation status until the cluster is deleted
     poll_for_op_status(client, op_identifier)
-
 
 # [END gke_delete_cluster]
 
